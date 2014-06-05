@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Wehicle</title>
+        <meta name="viewport" content="width=device-width, maximum-scale=1, user-scalable=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <link rel="stylesheet" type="text/css" href="css/app.css" />
+
+        <script type="text/javascript" src="lib/jquery.js"></script>
+        <script type="text/javascript" src="lib/underscore.js"></script>
+        <script type="text/javascript" src="lib/handlebars.js"></script>
+        <script type="text/javascript" src="lib/jquery.qrcode.min.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+
+                // Ask for 10 codes
+                _.each(_.range(10), function(i){
+                    var code = prompt("code " + i + ": ");
+                    // var qrcode = $.qrcode(code);
+
+                    code = code.toUpperCase();
+
+                    // Create template
+                    var source   = $("#single-cell").html();
+                    var template = Handlebars.compile(source);
+
+                    // Add new row to table?
+                    if(i%2 == 0){
+                        $('table').append($('<tr/>'));
+                    }
+
+                    // Add to DOM
+                    var html = template({
+                        i: i,
+                        name: code
+                    });
+                    $('table tr:last-child').append(html);
+
+                    // Get context of HTML for qrcode
+                    var context = $('table td#cell-' + i);
+                    console.log(context);
+                    
+                    $('.qrcode', context).qrcode({
+                        text: JSON.stringify({
+                            v: "1.1",
+                            c: code
+                        }),
+                        width: 57,
+                        height: 57
+                    });
+                    
+
+                });
+
+            });
+        </script>
+
+    </head>
+    <body style="opacity-ig:0.2;">
+        
+            <script id="single-cell" type="text/x-handlebars-template">
+                <td id="cell-{{i}}">
+                    <div class="clearfix">
+                        <div class="half text-center">
+                            <img src="img/logo_with_name.png" width="57px" />
+                        </div>
+                        <div class="half text-center">
+                            <div class="qrcode"></div>
+                        </div>
+                    </div>
+                    <div class="name text-center">
+                        {{name}}
+                    </div>
+                </td>
+            </script>
+
+        <div style="width:280px;overflow:hidden;">
+            <table width="100%">
+            </table>
+        </div>
+
+    </body>
+</html>
